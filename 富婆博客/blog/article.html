@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+	<title>文章页</title>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/font-awesome.css">
+</head>
+
+<body>
+	<div class="main-wrapper article">
+		<!-- 页头 -->
+		<header>
+			<nav>
+				<div class="logo"><a href="index.html">Room502</a></div>
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li><a href="article.html" class="active">博文</a></li>
+					<li><a href="photos.html">照片墙</a></li>
+					<li><a href="about.html">关于我们</a></li>
+				</ul>
+			</nav>
+			<div id="banner">
+				<div class="inner" style="max-width: 370px;">
+					<h1>Javascript数据结构：链表</h1>
+					<div class="sub-heading">Javascript data structure: linked list</div>
+				</div>
+			</div>
+		</header>
+		<!-- 内容 -->
+		<div class="content">
+			<div class="content_wrapper">
+				<div class="article_info">编辑于2021-03-27 | 浏览：998</div>
+				<article>
+					<h1 id="1-概论">1. 概论</h1>
+					<h2 id="1-1-链表与数组的区别"><a href="#1-1-链表与数组的区别" class="headerlink" title="1.1 链表与数组的区别"></a>1.1 链表与数组的区别</h2>
+					<p>存储多个元素来说，链表与数组都是很好的选择。Javascript 也内置的数组对象（小知识：Javascript
+						第一个版本中没有数组对象），并且定义了很多的操作方法。<strong>但是数组也有很多的不足，对于数组来说，从数组的起点或中间插入或移除项目的成本很高，因为要移动元素</strong>。然而对于链表而言，插入元素或者删除元素只需要移动链的指向即可，成本相对较低。然而但对于单纯的访问元素来说，数组可以直接通过索引坐标来访问，而链表要想访问一个数组则需要从头结点（Head）开始访问到最后。
+					</p>
+					<h2 id="1-2-链表的结构"><a href="#1-2-链表的结构" class="headerlink" title="1.2 链表的结构"></a>1.2 链表的结构</h2>
+					<p>链表通常由一个 Head 节点开始，链中的每个节点都有一个 value 存放节点的值，以及一个 next 指针来指向下一个节点，直到最后一个节点的 next 指向 null。</p>
+					<p><a href="http://img.cdn.esunr.xyz/markdown/20210514172551.png" data-fancybox="group" data-caption=""
+							class="fancybox"><img src="http://img.cdn.esunr.xyz/markdown/20210514172551.png" alt=""></a></p>
+					<h1 id="2-实现"><a href="#2-实现" class="headerlink" title="2. 实现"></a>2. 实现</h1>
+					<p>链表在 Javascript 中并没有一个内置的实现，因此需要我们手动实现。</p>
+					<h2 id="2-1-节点的构建"><a href="#2-1-节点的构建" class="headerlink" title="2.1 节点的构建"></a>2.1 节点的构建</h2>
+					<p>节点是链表中的基本单位，一个节点包含当前节点的值，以及一个 next 指针指向下一个节点对象，我们可以构建为：</p>
+					<figure class="highlight js">
+						<div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i>
+						<table>
+							<tbody>
+								<tr>
+									<td class="gutter">
+										<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre>
+									</td>
+									<td class="code">
+										<pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>{</span><br><span class="line">  <span class="keyword">constructor</span>(value) {</span><br><span class="line">    <span class="keyword">this</span>.value = value;</span><br><span class="line">    <span class="keyword">this</span>.next = <span class="literal">null</span>;</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> node = <span class="keyword">new</span> Node(<span class="number">1</span>)</span><br></pre>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</figure>
+
+					<p>我们就构建好了一个基本节点：</p>
+					<p><a href="http://img.cdn.esunr.xyz/markdown/20210514173244.png" data-fancybox="group" data-caption=""
+							class="fancybox"><img src="http://img.cdn.esunr.xyz/markdown/20210514173244.png" alt=""></a></p>
+					<h2 id="2-2-链表结构的构建"><a href="#2-2-链表结构的构建" class="headerlink" title="2.2 链表结构的构建"></a>2.2 链表结构的构建</h2>
+					<p>虽然我们已经构建出了链表节点的结构，但是我们还未对整个链表的整体结构进行一个定义。一个链表的整体结构是由一个 Head 节点出发的，因此 Head
+						节点是链表实例上的一个属性，同时节点数也是一个链表的属性，此外链表上还拥有各种各样的方法，以便于我们去打印链表、添加节点、删除节点、查找节点。</p>
+					<p>因此我们可以构建出一下一个链表的基本结构，随后再对链表的内置方法进行定义：</p>
+					<figure class="highlight js">
+						<div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i>
+						<table>
+							<tbody>
+								<tr>
+									<td class="gutter">
+										<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre>
+									</td>
+									<td class="code">
+										<pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span> </span>{</span><br><span class="line">  <span class="keyword">constructor</span>() {</span><br><span class="line">    <span class="keyword">this</span>.count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.head = <span class="literal">null</span>;</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  print() { <span class="comment">/** 具体实现 */</span> }</span><br><span class="line">  </span><br><span class="line">  push(value) { <span class="comment">/** 具体实现 */</span> }</span><br><span class="line">}</span><br></pre>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</figure>
+
+					<h2 id="2-3-打印链表"><a href="#2-3-打印链表" class="headerlink" title="2.3 打印链表"></a>2.3 打印链表</h2>
+					<p>打印链表需要从链表头部开始打印，依次向后重复取值，指导取值为 null 时停止取值</p>
+					<p><a href="http://img.cdn.esunr.xyz/markdown/20210514174717.png" data-fancybox="group" data-caption=""
+							class="fancybox"><img src="http://img.cdn.esunr.xyz/markdown/20210514174717.png" alt=""></a></p>
+					<figure class="highlight js">
+						<div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i>
+						<table>
+							<tbody>
+								<tr>
+									<td class="gutter">
+										<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre>
+									</td>
+									<td class="code">
+										<pre><span class="line">print() {</span><br><span class="line">  <span class="keyword">let</span> res = <span class="string">""</span>;</span><br><span class="line">  <span class="keyword">let</span> cur = <span class="keyword">this</span>.head;</span><br><span class="line">  <span class="keyword">while</span> (cur !== <span class="literal">null</span>) {</span><br><span class="line">    cur.next === <span class="literal">null</span></span><br><span class="line">      ? (res += cur.value)</span><br><span class="line">      : (res += cur.value + <span class="string">"=&gt;"</span>);</span><br><span class="line">    cur = cur.next;</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">console</span>.log(res);</span><br><span class="line">}</span><br></pre>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</figure>
+
+					<h2 id="2-4-向链表尾部添加元素"><a href="#2-4-向链表尾部添加元素" class="headerlink" title="2.4 向链表尾部添加元素"></a>2.4 向链表尾部添加元素
+					</h2>
+					<p>为链表添加节点分两种情况：</p>
+					<ul>
+						<li>如果链表中没有节点（<code>this.head === null</code>），则新增节点作为 head</li>
+						<li>如果链表中有节点，则在链表最后一位添加节点</li>
+					</ul>
+					<p><a href="http://img.cdn.esunr.xyz/markdown/20210514175453.png" data-fancybox="group" data-caption=""
+							class="fancybox"><img src="http://img.cdn.esunr.xyz/markdown/20210514175453.png" alt=""></a></p>
+					<figure class="highlight js">
+						<div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i>
+						<table>
+							<tbody>
+								<tr>
+									<td class="gutter">
+										<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre>
+									</td>
+									<td class="code">
+										<pre><span class="line">push(value) {</span><br><span class="line">  <span class="comment">// 新结点</span></span><br><span class="line">  <span class="keyword">let</span> newNode = <span class="keyword">new</span> Node(value);</span><br><span class="line">  <span class="comment">// 如果是头节点为空就将新节点放到头结点上</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.head === <span class="literal">null</span>) {</span><br><span class="line">    <span class="keyword">this</span>.head = newNode;</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// 否则将新节点放到链表的末尾</span></span><br><span class="line">  <span class="keyword">else</span> {</span><br><span class="line">    <span class="keyword">let</span> cur = <span class="keyword">this</span>.head;</span><br><span class="line">    <span class="keyword">while</span> (cur.next !== <span class="literal">null</span>) {</span><br><span class="line">      cur = cur.next;</span><br><span class="line">    }</span><br><span class="line">    cur.next = newNode;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">this</span>.count++;</span><br><span class="line">}</span><br></pre>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</figure>
+
+					<h2 id="2-5-删除节点"><a href="#2-5-删除节点" class="headerlink" title="2.5 删除节点"></a>2.5 删除节点</h2>
+					<p>删除节点也分两种情况：</p>
+					<ul>
+						<li>如果是移除第一项，就将链表的 head 转移给第二个节点</li>
+						<li>如果移除的不是第一项，就找到目标索引对应的节点，将节点的上一个节点的 next 指向，改为下一个节点上</li>
+					</ul>
+					<figure class="highlight js">
+						<div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i>
+						<table>
+							<tbody>
+								<tr>
+									<td class="gutter">
+										<pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre>
+									</td>
+									<td class="code">
+										<pre><span class="line">removeAt(index) {</span><br><span class="line">  <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; <span class="keyword">this</span>.count) {</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"索引值不存在"</span>);</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// 如果是移除第一项，就将链表的 head 转移给第二个节点</span></span><br><span class="line">  <span class="keyword">if</span> (index === <span class="number">0</span>) {</span><br><span class="line">    <span class="keyword">this</span>.head = <span class="keyword">this</span>.head.next;</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// 如果移除的不是第一项，就找到目标索引对应的节点，</span></span><br><span class="line">  <span class="comment">// 将节点的上一个节点的 next 指向，改为下一个节点上</span></span><br><span class="line">  <span class="keyword">else</span> {</span><br><span class="line">    <span class="keyword">let</span> cur = <span class="keyword">this</span>.head;</span><br><span class="line">    <span class="keyword">let</span> prev;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; index; i++) {</span><br><span class="line">      prev = cur;</span><br><span class="line">      cur = cur.next;</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">// 更改目标节点上一个节点的指向</span></span><br><span class="line">    prev.next = cur.next;</span><br><span class="line">  }</span><br><span class="line">}</span></pre>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</figure>
+				</article>
+			</div>
+		</div>
+		<!-- 页脚 -->
+		<footer>
+			<div class="share-group">
+				<a href=""><i class="icon-facebook-sign icon-2x"></i></a>
+				<a href=""><i class="icon-envelope-alt icon-2x"></i></a>
+				<a href=""><i class="icon-rss  icon-2x"></i></a>
+			</div>
+			<div class="copy">
+				&copy; Room502 2021
+			</div>
+		</footer>
+	</div>
+	<div class="mask"></div>
+	<div id="sidebar">
+		<ul>
+			<li><a href="">1</a></li>
+			<li><a href="">2</a></li>
+			<li><a href="">3</a></li>
+			<li><a href="">4</a></li>
+			<li><a href="">5</a></li>
+		</ul>
+	</div>
+	<button class="back-to-top">返回顶部</button>
+
+	<script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+	<script src="js/main.js"></script>
+</body>
+
+</html>
